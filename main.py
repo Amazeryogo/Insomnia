@@ -1,7 +1,8 @@
 import pygame
 
-global continue_game
+global continue_game, LEVEL
 continue_game = False
+LEVEL = 1
 
 
 class MainCharacter:
@@ -9,12 +10,13 @@ class MainCharacter:
         self.x = 0
         self.y = 0
         self.speed = 10
-        self.image = pygame.image.load("smiling_ball.png")
+        self.image = pygame.image.load("images/smiling_ball.png")
         self.image = pygame.transform.scale(self.image, (50, 50))
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
         self.points = 0
+        self.health = 3
 
     def move_forward(self):
         self.rect.x += self.speed * 2
@@ -43,7 +45,7 @@ class Enemy:
         self.x = x
         self.y = y
         self.speed = 5
-        self.image = pygame.image.load("sprite2.png")
+        self.image = pygame.image.load("images/sprite2.png")
         self.image = pygame.transform.scale(self.image, (50, 50))
         self.rect = self.image.get_rect()
         self.rect.x = self.x
@@ -61,18 +63,18 @@ pygame.init()
 # make the screen
 screen = pygame.display.set_mode((700, 700))
 # set background
-background = pygame.image.load("background.png")
+background = pygame.image.load("images/starting_screen.png")
 screen.blit(background, (0, 0))
 pygame.display.set_caption("Insomnia")
 
 # make a start button
-start_button = pygame.image.load("start_button.png")
+start_button = pygame.image.load("images/start2.png")
 start_button = pygame.transform.scale(start_button, (200, 100))
 start_button_rect = start_button.get_rect()
-start_button_rect.x = 350
-start_button_rect.y = 350
+start_button_rect.x = 250
+start_button_rect.y = 550
 screen.blit(start_button, start_button_rect)
-#if the start button is clicked, the game starts
+# if the start button is clicked, the game starts
 while True:
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -91,6 +93,8 @@ enemy.draw(screen)
 # draw the main screen character
 main_character.draw(screen)
 # get input from the user
+background = pygame.image.load("images/background.png")
+screen.blit(background, (0, 0))
 while continue_game:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -131,7 +135,64 @@ while continue_game:
         main_character.points = 0
         enemy.rect.x = 100
         enemy.rect.y = 100
-    # draw the main screen character
+        main_character.health -= 1
+
+    # display the main character's health as ehealth.png
+    if main_character.health == 3:
+        life1 = pygame.image.load("images/ehealth.png")
+        life1 = pygame.transform.scale(life1, (50, 50))
+        life1_rect = life1.get_rect()
+        life1_rect.x = 0
+        life1_rect.y = 0
+        screen.blit(life1, life1_rect)
+        life2 = pygame.image.load("images/ehealth.png")
+        life2 = pygame.transform.scale(life2, (50, 50))
+        life2_rect = life2.get_rect()
+        life2_rect.x = 50
+        life2_rect.y = 0
+        screen.blit(life2, life2_rect)
+        life3 = pygame.image.load("images/ehealth.png")
+        life3 = pygame.transform.scale(life3, (50, 50))
+        life3_rect = life3.get_rect()
+        life3_rect.x = 100
+        life3_rect.y = 0
+        screen.blit(life3, life3_rect)
+    if main_character.health == 2:
+        life1 = pygame.image.load("images/ehealth.png")
+        life1 = pygame.transform.scale(life1, (50, 50))
+        life1_rect = life1.get_rect()
+        life1_rect.x = 0
+        life1_rect.y = 0
+        screen.blit(life1, life1_rect)
+        life2 = pygame.image.load("images/ehealth.png")
+        life2 = pygame.transform.scale(life2, (50, 50))
+        life2_rect = life2.get_rect()
+        life2_rect.x = 50
+        life2_rect.y = 0
+        screen.blit(life2, life2_rect)
+    if main_character.health == 1:
+        life1 = pygame.image.load("images/ehealth.png")
+        life1 = pygame.transform.scale(life1, (50, 50))
+        life1_rect = life1.get_rect()
+        life1_rect.x = 0
+        life1_rect.y = 0
+        screen.blit(life1, life1_rect)
+
+    if main_character.health == 0:
+        continue_game = False
+        # display text that the game is over
+        font = pygame.font.Font(None, 50)
+        text = font.render("Game Over", True, (255, 0, 0))
+        screen.blit(text, (250, 250))
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.K_ESCAPE:
+                pygame.quit()
+                quit()
+            else:
+                continue_game = True
+                break
+
     main_character.draw(screen)
     enemy.draw(screen)
     # update the screen
