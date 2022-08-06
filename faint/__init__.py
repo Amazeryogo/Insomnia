@@ -7,7 +7,7 @@ class UserControlledObject:
         self.y = y
         self.speed = speed
         self.image = pygame.image.load(image_a)
-        self.image = pygame.transform.scale(self.image, (50, 50))
+        self.image = pygame.transform.scale(self.image, (64, 64))
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
@@ -112,3 +112,19 @@ def draw_hearts(screen, x, y, main_character):
         screen.blit(life1, life1_rect)
     if main_character.health == 0:
         pass
+
+class StaticObject:
+    def __init__(self, x, y, image_a, image_b=None):
+        self.x = x
+        self.y = y
+        self.image = pygame.image.load(image_a)
+        self.image = pygame.transform.scale(self.image, (50, 50))
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+
+    def get_rect(self):
+        return self.rect
