@@ -70,41 +70,41 @@ class NonUserControlledObject:
         return self.rect
 
 
-def draw_hearts(screen, x, y, main_character):
+def draw_hearts(screen, x, y, main_character,image):
     if main_character.health == 3:
-        life1 = pygame.image.load("images/ehealth.png")
+        life1 = pygame.image.load(image)
         life1 = pygame.transform.scale(life1, (50, 50))
         life1_rect = life1.get_rect()
         life1_rect.x = 0
         life1_rect.y = 0
         screen.blit(life1, life1_rect)
-        life2 = pygame.image.load("images/ehealth.png")
+        life2 = pygame.image.load(image)
         life2 = pygame.transform.scale(life2, (50, 50))
         life2_rect = life2.get_rect()
         life2_rect.x = 50
         life2_rect.y = 0
         screen.blit(life2, life2_rect)
-        life3 = pygame.image.load("images/ehealth.png")
+        life3 = pygame.image.load(image)
         life3 = pygame.transform.scale(life3, (50, 50))
         life3_rect = life3.get_rect()
         life3_rect.x = 100
         life3_rect.y = 0
         screen.blit(life3, life3_rect)
     if main_character.health == 2:
-        life1 = pygame.image.load("images/ehealth.png")
+        life1 = pygame.image.load(image)
         life1 = pygame.transform.scale(life1, (50, 50))
         life1_rect = life1.get_rect()
         life1_rect.x = 0
         life1_rect.y = 0
         screen.blit(life1, life1_rect)
-        life2 = pygame.image.load("images/ehealth.png")
+        life2 = pygame.image.load(image)
         life2 = pygame.transform.scale(life2, (50, 50))
         life2_rect = life2.get_rect()
         life2_rect.x = 50
         life2_rect.y = 0
         screen.blit(life2, life2_rect)
     if main_character.health == 1:
-        life1 = pygame.image.load("images/ehealth.png")
+        life1 = pygame.image.load(image)
         life1 = pygame.transform.scale(life1, (50, 50))
         life1_rect = life1.get_rect()
         life1_rect.x = 0

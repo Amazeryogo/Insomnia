@@ -1,5 +1,6 @@
 import faint
 import pygame
+import random
 
 global continue_game, LEVEL
 continue_game = False
@@ -57,7 +58,7 @@ while True:
     pygame.display.update()
 
 # draw the main screen character
-main_character = faint.UserControlledObject(0, 0, 10, "images/mc2.png", 0, 3)
+main_character = faint.UserControlledObject(0, 0, 50, "images/mc2.png", 0, 3)
 # draw the enemy
 enemy = faint.NonUserControlledObject(20, 500, 10, "images/sprite2.png")
 enemy.draw(screen)
@@ -105,19 +106,20 @@ while continue_game:
     enemy.movement()
     # if a main character collides with an enemy, reset the game
     if main_character.rect.colliderect(enemy.rect):
-        main_character.rect.x = 300
-        main_character.rect.y = 300
+        main_character.rect.x = random.randint(0, 700)
+        main_character.rect.y = random.randint(0, 700)
         main_character.points = 0
-        enemy.rect.x = 100
-        enemy.rect.y = 500
+        enemy.rect.x = random.randint(0, 700)
+        enemy.rect.y = random.randint(0, 700)
         main_character.health -= 1
 
     if main_character.rect.colliderect(health_point.rect):
-        health_point.rect.x = health_point.rect.x + 100
-        health_point.rect.y = health_point.rect.y + 100
+        health_point.rect.x = random.randint(0, 700)
+        health_point.rect.y = random.randint(0, 700)
         main_character.health += 1
         if main_character.health > 3:
             main_character.health = 3
+
     if health_point.rect.x > 700:
         health_point.rect.x = 0
     elif health_point.rect.x < 0:
@@ -127,7 +129,7 @@ while continue_game:
     elif health_point.rect.y < 0:
         health_point.rect.y = 0
     # display the main character's health as ehealth.png
-    faint.draw_hearts(screen, 0, 0, main_character)
+    faint.draw_hearts(screen, 0, 0, main_character, "images/ehealth.png")
 
     if main_character.health == 0:
         continue_game = False
@@ -147,7 +149,7 @@ while continue_game:
     main_character.draw(screen)
     enemy.draw(screen)
     health_point.draw(screen)
-    faint.draw_hearts(screen, 0, 0, main_character)
+    faint.draw_hearts(screen, 0, 0, main_character,"images/ehealth.png")
     # update the screen
     pygame.display.update()
     # wait for 1/60th of a second
