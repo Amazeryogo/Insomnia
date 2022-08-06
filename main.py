@@ -6,32 +6,6 @@ global continue_game, LEVEL
 continue_game = False
 LEVEL = 1
 
-
-class Health_Points(faint.StaticObject):
-    def __init__(self, x, y, image):
-        super().__init__(x, y, image)
-        self.health = 3
-        self.speed = 0
-        self.image = pygame.image.load(image)
-        self.image = pygame.transform.scale(self.image, (50, 50))
-        self.rect = self.image.get_rect()
-        self.rect.x = self.x
-        self.rect.y = self.y
-        self.rect.x += self.speed
-        self.rect.y += self.speed
-        self.draw(screen)
-
-    def movement(self):
-        self.rect.x += self.speed
-        self.rect.y += self.speed
-
-    def draw(self, screen):
-        screen.blit(self.image, self.rect)
-
-    def get_rect(self):
-        return self.rect
-
-
 pygame.init()
 # make the screen
 screen = pygame.display.set_mode((700, 700))
@@ -67,8 +41,7 @@ main_character.draw(screen)
 # get input from the user
 background = pygame.image.load("images/background.png")
 
-health_point = Health_Points(100, 100, "images/lives.png")
-
+health_point = faint.HealthPoints(100, 100, "images/lives.png", screen)
 
 screen.blit(background, (0, 0))
 while continue_game:
@@ -149,7 +122,7 @@ while continue_game:
     main_character.draw(screen)
     enemy.draw(screen)
     health_point.draw(screen)
-    faint.draw_hearts(screen, 0, 0, main_character,"images/ehealth.png")
+    faint.draw_hearts(screen, 0, 0, main_character, "images/ehealth.png")
     # update the screen
     pygame.display.update()
     # wait for 1/60th of a second

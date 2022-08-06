@@ -1,0 +1,6 @@
+Todo:
+    1) Redraw most sprites
+    2) make weapons
+    3) make enemies
+    4) make puzzles
+    5) make rules
