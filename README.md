@@ -5,6 +5,6 @@ Basically, Insomnia is a concept game that i plan to make in the next few weeks.
 
 In the end, you basically attain the key to get out of the house.
 
-**Inspiration**: [Solo Leveling](https://mangareader.to/solo-leveling-21) and [One Piece](https://mangareader.to/one-piece-3)
+**Inspiration**: [Solo Leveling](https://mangareader.to/solo-leveling-21) and [One Piece](https://en.wikipedia.org/wiki/One_Piece)
 
 ya, thats all for now, i hope you all enjoy the game, thank you

@@ -46,6 +46,11 @@ class UserControlledObject:
 
     def get_health(self): return self.health
 
+    def attack(self, enemy):
+        enemy.remove_health()
+        enemy.getting_damage = True
+        self.remove_points()
+
 
 class NonUserControlledObject:
     def __init__(self, x, y, speed, image_a, image_b=None):
@@ -170,33 +175,36 @@ class Key(StaticObject):
     def add_in_user_inventory(self, main_character): main_character.add_item(self)
 
 
-class Ghost(NonUserControlledObject):
-    def __init__(self, image, screen):
-        super().__init__(0, 0, 0, image)
-        self.speed = 0
-        self.image = pygame.image.load("ghost.png")
-        self.image = pygame.transform.scale(self.image, (50, 50))
-        self.rect = self.image.get_rect()
-        self.rect.x = self.x
-        self.rect.y = self.y
-        self.rect.x += self.speed
-        self.rect.y += self.speed
-        self.draw(screen)
-        self.health = 3
-        self.getting_damage = False
+class Surroundings:
+    def __init__(self, screen, background, entities):
+        self.screen = screen
+        self.background = background
+        self.entities = entities
 
-    def movement(self):
-        self.rect.x += self.speed
-        self.rect.y += self.speed
+    def draw(self):
+        self.screen.blit(self.background, (0, 0))
+        for entity in self.entities:
+            entity.draw(self.screen)
 
-    def speak(self, screen, text):
-        font = pygame.font.SysFont("comicsansms", 30)
-        text = font.render(text, True, (255, 255, 255))
-        text_rect = text.get_rect()
-        text_rect.center = (self.rect.x + 25, self.rect.y + 25)
-        screen.blit(text, text_rect)
 
-    def attack(self, main_character):
-        if 50 > main_character.rect.x - self.rect.x > -50 and self.getting_damage == False:
-            if 50 > main_character.rect.y - self.rect.y > -50 and self.getting_damage == False:
-                main_character.health -= 1
+class Sakazuki:
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def check_collision(obj1, obj2):
+        if obj1.rect.colliderect(obj2.rect):
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def overflow(x, y, obj):
+        if obj.rect.x > x:
+            obj.rect.x = x
+        elif obj.rect.y > y:
+            obj.rect.y = y
+        elif obj.rect.x < 0:
+            obj.rect.x = 0
+        elif obj.rect.y < 0:
+            obj.rect.y = 0

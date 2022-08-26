@@ -1,6 +1,11 @@
-import faint
+import gearboy
 import pygame
 import random
+import json
+
+with open('config.json','r') as f:
+    x = json.load(f)
+
 
 global continue_game, LEVEL
 continue_game = False
@@ -8,17 +13,18 @@ LEVEL = 1
 
 pygame.init()
 # make the screen
-screen = pygame.display.set_mode((700, 700))
+screen = pygame.display.set_mode((x['x'], x['y']))
 # set background
-background = pygame.image.load("images/starting_screen.png")
+background = pygame.image.load("images/startscreen.png")
+background = pygame.transform.scale(background, (700, 700))
 screen.blit(background, (0, 0))
 pygame.display.set_caption("Insomnia")
 # make a start button
-start_button = pygame.image.load("images/start2.png")
+start_button = pygame.image.load("images/startbutton.png")
 start_button = pygame.transform.scale(start_button, (200, 100))
 start_button_rect = start_button.get_rect()
 start_button_rect.x = 250
-start_button_rect.y = 550
+start_button_rect.y = 250
 screen.blit(start_button, start_button_rect)
 # if the start button is clicked, the game starts
 while True:
@@ -27,21 +33,24 @@ while True:
             if start_button_rect.collidepoint(event.pos):
                 continue_game = True
                 break
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            quit()
     if continue_game:
         break
     pygame.display.update()
 
 # draw the main screen character
-main_character = faint.UserControlledObject(0, 0, 50, "images/mc2.png", 0, 3)
+main_character = gearboy.UserControlledObject(0, 0, 50, "images/mc2.png", 0, 3)
 # draw the enemy
-enemy = faint.NonUserControlledObject(20, 500, 10, "images/sprite2.png")
+enemy = gearboy.NonUserControlledObject(20, 500, 10, "images/sprite2.png")
 enemy.draw(screen)
 # draw the main screen character
 main_character.draw(screen)
 # get input from the user
 background = pygame.image.load("images/background.png")
 
-health_point = faint.HealthPoints(100, 100, "images/lives.png", screen)
+health_point = gearboy.HealthPoints(100, 100, "images/lives.png", screen)
 
 screen.blit(background, (0, 0))
 while continue_game:
@@ -102,7 +111,7 @@ while continue_game:
     elif health_point.rect.y < 0:
         health_point.rect.y = 0
     # display the main character's health as ehealth.png
-    faint.draw_hearts(screen, 0, 0, main_character, "images/ehealth.png")
+    gearboy.draw_hearts(screen, 0, 0, main_character, "images/ehealth.png")
 
     if main_character.health == 0:
         continue_game = False
@@ -122,7 +131,7 @@ while continue_game:
     main_character.draw(screen)
     enemy.draw(screen)
     health_point.draw(screen)
-    faint.draw_hearts(screen, 0, 0, main_character, "images/ehealth.png")
+    gearboy.draw_hearts(screen, 0, 0, main_character, "images/ehealth.png")
     # update the screen
     pygame.display.update()
     # wait for 1/60th of a second
