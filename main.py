@@ -13,6 +13,7 @@ STARTSCREEN = "images/startscreen.png"
 STARTBUTTON = "images/startbutton.png"
 HEART = "images/health.png"
 GREYHEART = "images/greyheart.png"
+BLACKHEART = "images/blackheart.png"
 
 pygame.init()
 # make the screen
@@ -111,6 +112,7 @@ while continue_game:
     main_character.draw(screen)
     enemy.draw(screen)
     health_point.draw(screen)
+    gearboy.draw_hearts(screen, 0, 0, main_character, BLACKHEART)
     gearboy.draw_hearts(screen, 0, 0, main_character, HEART)
     # update the screen
     pygame.display.update()
