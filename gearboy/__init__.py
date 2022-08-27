@@ -1,5 +1,8 @@
 import pygame
+import json
 
+with open('config.json','r') as f:
+    xsf = json.load(f)
 
 class UserControlledObject:
     def __init__(self, x, y, speed, image_a, points, health, image_b=None):
@@ -150,6 +153,7 @@ class HealthPoints(StaticObject):
     def movement(self):
         self.rect.x += self.speed
         self.rect.y += self.speed
+        Sakazuki.overflow(xsf['x'], xsf['y'], enemy)
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
@@ -175,16 +179,6 @@ class Key(StaticObject):
     def add_in_user_inventory(self, main_character): main_character.add_item(self)
 
 
-class Surroundings:
-    def __init__(self, screen, background, entities):
-        self.screen = screen
-        self.background = background
-        self.entities = entities
-
-    def draw(self):
-        self.screen.blit(self.background, (0, 0))
-        for entity in self.entities:
-            entity.draw(self.screen)
 
 
 class Sakazuki:
@@ -201,9 +195,9 @@ class Sakazuki:
     @staticmethod
     def overflow(x, y, obj):
         if obj.rect.x > x:
-            obj.rect.x = x
+            obj.rect.x = 0
         elif obj.rect.y > y:
-            obj.rect.y = y
+            obj.rect.y = 0
         elif obj.rect.x < 0:
             obj.rect.x = 0
         elif obj.rect.y < 0:

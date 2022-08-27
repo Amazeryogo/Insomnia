@@ -2,25 +2,28 @@ import gearboy
 import pygame
 import random
 import json
-
-with open('config.json','r') as f:
-    x = json.load(f)
+from gearboy import xsf
 
 
 global continue_game, LEVEL
 continue_game = False
 LEVEL = 1
+BACKGROUND_IMAGE = "images/background.jpg"
+STARTSCREEN = "images/startscreen.png"
+STARTBUTTON = "images/startbutton.png"
+HEART = "images/health.png"
+GREYHEART = "images/greyheart.png"
 
 pygame.init()
 # make the screen
-screen = pygame.display.set_mode((x['x'], x['y']))
+screen = pygame.display.set_mode((xsf['x'], xsf['y']))
 # set background
-background = pygame.image.load("images/startscreen.png")
+background = pygame.image.load(STARTSCREEN)
 background = pygame.transform.scale(background, (700, 700))
 screen.blit(background, (0, 0))
 pygame.display.set_caption("Insomnia")
 # make a start button
-start_button = pygame.image.load("images/startbutton.png")
+start_button = pygame.image.load(STARTBUTTON)
 start_button = pygame.transform.scale(start_button, (200, 100))
 start_button_rect = start_button.get_rect()
 start_button_rect.x = 250
@@ -48,9 +51,9 @@ enemy.draw(screen)
 # draw the main screen character
 main_character.draw(screen)
 # get input from the user
-background = pygame.image.load("images/background.png")
+background = pygame.image.load(BACKGROUND_IMAGE)
 
-health_point = gearboy.HealthPoints(100, 100, "images/lives.png", screen)
+health_point = gearboy.HealthPoints(100, 100, GREYHEART, screen)
 
 screen.blit(background, (0, 0))
 while continue_game:
@@ -68,24 +71,9 @@ while continue_game:
             if event.key == pygame.K_RIGHT:
                 main_character.move_forward()
     # if a sprite goes off the screen, move it back to the other side of the screen
-    if main_character.rect.x > 700:
-        main_character.rect.x = 0
-    if main_character.rect.x < 0:
-        main_character.rect.x = 0
-    if main_character.rect.y > 700:
-        main_character.rect.y = 0
-    if main_character.rect.y < 0:
-        main_character.rect.y = 0
-
-    if enemy.rect.x > 700:
-        enemy.rect.x = 0
-    if enemy.rect.x < 0:
-        enemy.rect.x = 0
-    if enemy.rect.y > 700:
-        enemy.rect.y = 0
-    if enemy.rect.y < 0:
-        enemy.rect.y = 0
+    gearboy.Sakazuki.overflow(xsf['x'],xsf['y'],main_character)
     enemy.movement()
+    gearboy.Sakazuki.overflow(xsf['x'], xsf['y'], enemy)
     # if a main character collides with an enemy, reset the game
     if main_character.rect.colliderect(enemy.rect):
         main_character.rect.x = random.randint(0, 700)
@@ -102,16 +90,8 @@ while continue_game:
         if main_character.health > 3:
             main_character.health = 3
 
-    if health_point.rect.x > 700:
-        health_point.rect.x = 0
-    elif health_point.rect.x < 0:
-        health_point.rect.x = 0
-    elif health_point.rect.y > 700:
-        health_point.rect.y = 0
-    elif health_point.rect.y < 0:
-        health_point.rect.y = 0
-    # display the main character's health as ehealth.png
-    gearboy.draw_hearts(screen, 0, 0, main_character, "images/ehealth.png")
+    gearboy.Sakazuki.overflow(xsf['x'],xsf['y'],health_point)
+    gearboy.draw_hearts(screen, 0, 0, main_character, HEART)
 
     if main_character.health == 0:
         continue_game = False
@@ -131,7 +111,7 @@ while continue_game:
     main_character.draw(screen)
     enemy.draw(screen)
     health_point.draw(screen)
-    gearboy.draw_hearts(screen, 0, 0, main_character, "images/ehealth.png")
+    gearboy.draw_hearts(screen, 0, 0, main_character, HEART)
     # update the screen
     pygame.display.update()
     # wait for 1/60th of a second
