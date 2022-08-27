@@ -1,19 +1,20 @@
 import gearboy
 import pygame
 import random
-import json
 from gearboy import xsf
 
 
-global continue_game, LEVEL
+global continue_game, LEVEL, DRAW_ENEMY
 continue_game = False
 LEVEL = 1
+DRAW_ENEMY = True
 BACKGROUND_IMAGE = "images/background.jpg"
 STARTSCREEN = "images/startscreen.png"
 STARTBUTTON = "images/startbutton.png"
 HEART = "images/health.png"
 GREYHEART = "images/greyheart.png"
 BLACKHEART = "images/blackheart.png"
+GHOST = "images/spirit.png"
 
 pygame.init()
 # make the screen
@@ -47,7 +48,7 @@ while True:
 # draw the main screen character
 main_character = gearboy.UserControlledObject(0, 0, 50, "images/mc2.png", 0, 3)
 # draw the enemy
-enemy = gearboy.NonUserControlledObject(20, 500, 10, "images/sprite2.png")
+enemy = gearboy.NonUserControlledObject(100, 0, 2, GHOST)
 enemy.draw(screen)
 # draw the main screen character
 main_character.draw(screen)
@@ -55,6 +56,9 @@ main_character.draw(screen)
 background = pygame.image.load(BACKGROUND_IMAGE)
 
 health_point = gearboy.HealthPoints(100, 100, GREYHEART, screen)
+
+saber = gearboy.Saber(600,600,"images/saber1.png",screen)
+
 
 screen.blit(background, (0, 0))
 while continue_game:
@@ -76,20 +80,27 @@ while continue_game:
     enemy.movement()
     gearboy.Sakazuki.overflow(xsf['x'], xsf['y'], enemy)
     # if a main character collides with an enemy, reset the game
-    if main_character.rect.colliderect(enemy.rect):
+
+    if gearboy.Sakazuki.check_collision(main_character, enemy):
         main_character.rect.x = random.randint(0, 700)
         main_character.rect.y = random.randint(0, 700)
-        main_character.points = 0
         enemy.rect.x = random.randint(0, 700)
         enemy.rect.y = random.randint(0, 700)
-        main_character.health -= 1
+        if main_character.saber:
+            enemy.remove_health()
+        else:
+            main_character.remove_health()
 
-    if main_character.rect.colliderect(health_point.rect):
+    if gearboy.Sakazuki.check_collision(main_character,health_point):
         health_point.rect.x = random.randint(0, 700)
         health_point.rect.y = random.randint(0, 700)
-        main_character.health += 1
-        if main_character.health > 3:
-            main_character.health = 3
+        main_character.add_health()
+
+    if gearboy.Sakazuki.check_collision(main_character,saber):
+        saber.acquired = True
+        main_character.saber = True
+        main_character.image = pygame.transform.scale(pygame.image.load("images/mcws1.png"), (64, 64))
+
 
     gearboy.Sakazuki.overflow(xsf['x'],xsf['y'],health_point)
     gearboy.draw_hearts(screen, 0, 0, main_character, HEART)
@@ -108,11 +119,23 @@ while continue_game:
             else:
                 continue_game = True
                 break
+    if enemy.health == 0:
+        DRAW_ENEMY = False
+        enemy.speed = 0
+        enemy.rect.x = 900
+        enemy.rect.y = 900
+        font = pygame.font.Font(None, 50)
+        text = font.render("You killed the ghost", True, (0, 255, 0))
+        screen.blit(text, (250, 250))
+        pygame.display.update()
 
+    if DRAW_ENEMY:
+        enemy.draw(screen)
+    if not saber.acquired:
+        saber.draw(screen)
     main_character.draw(screen)
-    enemy.draw(screen)
     health_point.draw(screen)
-    gearboy.draw_hearts(screen, 0, 0, main_character, BLACKHEART)
+    gearboy.draw_hearts(screen, 550, 0, enemy, BLACKHEART)
     gearboy.draw_hearts(screen, 0, 0, main_character, HEART)
     # update the screen
     pygame.display.update()

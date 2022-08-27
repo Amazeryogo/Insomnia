@@ -1,8 +1,11 @@
+import random
+
 import pygame
 import json
 
-with open('config.json','r') as f:
+with open('config.json', 'r') as f:
     xsf = json.load(f)
+
 
 class UserControlledObject:
     def __init__(self, x, y, speed, image_a, points, health, image_b=None):
@@ -17,6 +20,7 @@ class UserControlledObject:
         self.points = points
         self.health = health
         self.inventory = []
+        self.saber = False
 
     def get_inventory(self): return self.inventory
 
@@ -50,9 +54,8 @@ class UserControlledObject:
     def get_health(self): return self.health
 
     def attack(self, enemy):
-        enemy.remove_health()
-        enemy.getting_damage = True
-        self.remove_points()
+        if self.saber == True:
+            enemy.remove_health()
 
 
 class NonUserControlledObject:
@@ -65,6 +68,12 @@ class NonUserControlledObject:
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
+        self.health = 3
+
+    def add_health(self):
+        if self.health < 2: self.health += 1
+
+    def remove_health(self): self.health -= 1
 
     def movement(self):
         self.rect.x += self.speed
@@ -77,47 +86,47 @@ class NonUserControlledObject:
         return self.rect
 
 
-def draw_hearts(screen, x, y, main_character, image):
-    if main_character.health == 3:
+def draw_hearts(screen, x, y, obj, image):
+    if obj.health == 3:
         life1 = pygame.image.load(image)
         life1 = pygame.transform.scale(life1, (50, 50))
         life1_rect = life1.get_rect()
-        life1_rect.x = 0
-        life1_rect.y = 0
+        life1_rect.x = x
+        life1_rect.y = y
         screen.blit(life1, life1_rect)
         life2 = pygame.image.load(image)
         life2 = pygame.transform.scale(life2, (50, 50))
         life2_rect = life2.get_rect()
-        life2_rect.x = 50
-        life2_rect.y = 0
+        life2_rect.x = x + 50
+        life2_rect.y = y
         screen.blit(life2, life2_rect)
         life3 = pygame.image.load(image)
         life3 = pygame.transform.scale(life3, (50, 50))
         life3_rect = life3.get_rect()
-        life3_rect.x = 100
-        life3_rect.y = 0
+        life3_rect.x = x + 100
+        life3_rect.y = y
         screen.blit(life3, life3_rect)
-    if main_character.health == 2:
+    if obj.health == 2:
         life1 = pygame.image.load(image)
         life1 = pygame.transform.scale(life1, (50, 50))
         life1_rect = life1.get_rect()
-        life1_rect.x = 0
-        life1_rect.y = 0
+        life1_rect.x = x
+        life1_rect.y = y
         screen.blit(life1, life1_rect)
         life2 = pygame.image.load(image)
         life2 = pygame.transform.scale(life2, (50, 50))
         life2_rect = life2.get_rect()
-        life2_rect.x = 50
-        life2_rect.y = 0
+        life2_rect.x = x + 50
+        life2_rect.y = y
         screen.blit(life2, life2_rect)
-    if main_character.health == 1:
+    if obj.health == 1:
         life1 = pygame.image.load(image)
         life1 = pygame.transform.scale(life1, (50, 50))
         life1_rect = life1.get_rect()
-        life1_rect.x = 0
-        life1_rect.y = 0
+        life1_rect.x = x
+        life1_rect.y = y
         screen.blit(life1, life1_rect)
-    if main_character.health == 0:
+    if obj.health == 0:
         pass
 
 
@@ -153,7 +162,6 @@ class HealthPoints(StaticObject):
     def movement(self):
         self.rect.x += self.speed
         self.rect.y += self.speed
-        Sakazuki.overflow(xsf['x'], xsf['y'], enemy)
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
@@ -176,9 +184,21 @@ class Key(StaticObject):
 
     def get_rect(self): return self.rect
 
-    def add_in_user_inventory(self, main_character): main_character.add_item(self)
 
+class Saber(StaticObject):
+    def __init__(self, x, y, image, screen):
+        super().__init__(x, y, image)
+        self.image = pygame.image.load(image)
+        self.image = pygame.transform.scale(self.image, (50, 50))
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+        self.draw(screen)
+        self.acquired = False
 
+    def draw(self, screen): screen.blit(self.image, self.rect)
+
+    def get_rect(self): return self.rect
 
 
 class Sakazuki:
@@ -187,10 +207,8 @@ class Sakazuki:
 
     @staticmethod
     def check_collision(obj1, obj2):
-        if obj1.rect.colliderect(obj2.rect):
-            return True
-        else:
-            return False
+        if obj1.rect.colliderect(obj2.rect): return True
+        else: return False
 
     @staticmethod
     def overflow(x, y, obj):
