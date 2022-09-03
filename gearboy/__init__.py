@@ -22,36 +22,50 @@ class UserControlledObject:
         self.inventory = []
         self.saber = False
 
-    def get_inventory(self): return self.inventory
+    def get_inventory(self):
+        return self.inventory
 
-    def add_item_to_inventory(self, item): self.inventory.append(item)
+    def add_item_to_inventory(self, item):
+        self.inventory.append(item)
 
-    def remove_item(self, item): self.inventory.remove(item)
+    def remove_item(self, item):
+        self.inventory.remove(item)
 
-    def is_item_in_inventory(self, item): return item in self.inventory
+    def is_item_in_inventory(self, item):
+        return item in self.inventory
 
-    def move_forward(self): self.rect.x += self.speed
+    def move_forward(self):
+        self.rect.x += self.speed
 
-    def move_backward(self): self.rect.x -= self.speed
+    def move_backward(self):
+        self.rect.x -= self.speed
 
-    def move_up(self): self.rect.y -= self.speed
+    def move_up(self):
+        self.rect.y -= self.speed
 
-    def move_down(self): self.rect.y += self.speed
+    def move_down(self):
+        self.rect.y += self.speed
 
-    def draw(self, screen): screen.blit(self.image, self.rect)
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
 
-    def add_point(self): self.points += 1
+    def add_point(self):
+        self.points += 1
 
-    def remove_health(self): self.health -= 1
+    def remove_health(self):
+        self.health -= 1
 
-    def remove_points(self): self.points -= 1
+    def remove_points(self):
+        self.points -= 1
 
-    def get_points(self): return self.points
+    def get_points(self):
+        return self.points
 
     def add_health(self):
         if self.health < 3: self.health += 1
 
-    def get_health(self): return self.health
+    def get_health(self):
+        return self.health
 
     def attack(self, enemy):
         if self.saber == True:
@@ -201,14 +215,30 @@ class Saber(StaticObject):
     def get_rect(self): return self.rect
 
 
+class Textbox:
+    def __init__(self, x, y, x1, y1, font):
+        self.rect = None
+        self.x = x
+        self.y = y
+        self.x1 = x1
+        self.y1 = y1
+        self.font = font
+
+    def add_text(self, text, screen,x,y):
+        screen.blit(self.font.render(text, True, (255, 255, 255)), (x,y))
+
+
+# general functions to make the main file less bloated. named after the admiral general of the marines
 class Sakazuki:
     def __init__(self):
         pass
 
     @staticmethod
     def check_collision(obj1, obj2):
-        if obj1.rect.colliderect(obj2.rect): return True
-        else: return False
+        if obj1.rect.colliderect(obj2.rect):
+            return True
+        else:
+            return False
 
     @staticmethod
     def overflow(x, y, obj):
