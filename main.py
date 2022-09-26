@@ -14,6 +14,7 @@ HEART = "images/health.png"
 GREYHEART = "images/greyheart.png"
 BLACKHEART = "images/blackheart.png"
 GHOST = "images/spirit.png"
+SETTINGS = "images/settings.png"
 
 pygame.init()
 # make the screen
@@ -30,6 +31,12 @@ start_button_rect = start_button.get_rect()
 start_button_rect.x = 250
 start_button_rect.y = 250
 screen.blit(start_button, start_button_rect)
+settings = pygame.image.load(SETTINGS)
+settings = pygame.transform.scale(settings, (64, 64))
+settings_rect = start_button.get_rect()
+settings_rect.x = 0
+settings_rect.y = 625
+screen.blit(settings, settings_rect)
 # if the start button is clicked, the game starts
 while True:
     for event in pygame.event.get():
@@ -37,6 +44,8 @@ while True:
             if start_button_rect.collidepoint(event.pos):
                 continue_game = True
                 break
+            elif settings_rect.collidepoint(event.pos):
+                gearboy.root.mainloop()
         if event.type == pygame.QUIT:
             pygame.quit()
             quit()
@@ -56,6 +65,7 @@ background = pygame.image.load(BACKGROUND_IMAGE)
 
 health_point = gearboy.HealthPoints(100, 100, GREYHEART, screen)
 
+tnt = [gearboy.TNT(random.randint(0, 700), random.randint(0, 700), "images/tnt_stable.png", screen),gearboy.TNT(random.randint(0, 700), random.randint(0, 700), "images/tnt_stable.png", screen),gearboy.TNT(random.randint(0, 700), random.randint(0, 700), "images/tnt_stable.png", screen)]
 saber = gearboy.Saber(300, 300, "images/saber1.png", screen)
 
 font = pygame.font.SysFont('Atari', 30)
@@ -64,9 +74,6 @@ textbox = gearboy.Textbox(0, 600, 700, 600, font)
 screen.blit(background, (0, 0))
 while continue_game:
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            quit()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
                 main_character.move_up()
@@ -88,7 +95,7 @@ while continue_game:
         enemy.rect.x = random.randint(0, 700)
         enemy.rect.y = random.randint(0, 700)
         if main_character.saber:
-            x = random.randint(0,3)
+            x = random.randint(0, 3)
             if x == 1:
                 enemy.remove_health()
                 main_character.remove_health()
@@ -108,35 +115,42 @@ while continue_game:
         saber.acquired = True
         main_character.saber = True
         main_character.image = pygame.transform.scale(pygame.image.load("images/mcws1.png"), (64, 64))
-        textbox.add_text("SABER ACQUIRED!",screen,250,600)
+        textbox.add_text("SABER ACQUIRED!", screen, 250, 600)
         pygame.display.update()
 
+    for k in tnt:
+        if gearboy.Sakazuki.check_collision(main_character,k) :
+            main_character.rect.x = random.randint(0, 700)
+            main_character.rect.y = random.randint(0, 700)
+            if k.blasted == False:
+                main_character.remove_health()
+                main_character.remove_health()
+                k.image = pygame.transform.scale(pygame.image.load("images/bomb_blasted.png"), (64, 64))
+                k.blasted = True
+            elif k.blasted == True:
+                main_character.remove_health()
+            pygame.display.update()
 
+    for k in tnt:
+        if gearboy.Sakazuki.check_collision(enemy,k):
+            if k.blasted:
+                enemy.add_health()
+
+            pygame.display.update()
 
     gearboy.Sakazuki.overflow(xsf['x'], xsf['y'], health_point)
     gearboy.draw_hearts(screen, 0, 0, main_character, HEART)
 
-    if main_character.health == 0:
+    if main_character.health <= 0:
         continue_game = False
-        # display text that the game is over
-        font = pygame.font.Font("Atari", 50)
-        text = font.render("Game Over", True, (255, 0, 0))
-        screen.blit(text, (250, 250))
-        pygame.display.update()
-        for event in pygame.event.get():
-            if event.type == pygame.K_ESCAPE:
-                pygame.quit()
-                quit()
-            else:
-                continue_game = True
-                break
-    if enemy.health == 0:
+
+    if enemy.health <= 0:
         DRAW_ENEMY = False
         enemy.speed = 0
         enemy.rect.x = 900
         enemy.rect.y = 900
-        textbox.add_text("",screen,250,600)
-        textbox.add_text("Congratulations You killed the ghost!",screen,0,600)
+        textbox.add_text("", screen, 250, 600)
+        textbox.add_text("Congratulations You killed the ghost!", screen, 0, 600)
         pygame.display.update()
 
     if DRAW_ENEMY:
@@ -148,6 +162,8 @@ while continue_game:
         health_point.rect.x = 900
         health_point.rect.y = 900
     main_character.draw(screen)
+    for k in tnt:
+        k.draw(screen)
     gearboy.draw_hearts(screen, 550, 0, enemy, BLACKHEART)
     gearboy.draw_hearts(screen, 0, 0, main_character, HEART)
     # update the screen
@@ -156,3 +172,8 @@ while continue_game:
     pygame.time.wait(1000 // 60)
     # clear the screen
     screen.blit(background, (0, 0))
+
+font = pygame.font.SysFont("Atari", 50)
+text = font.render("Game Over", True, (255, 0, 0))
+screen.blit(text, (250, 250))
+pygame.display.update()

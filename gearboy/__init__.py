@@ -1,10 +1,25 @@
 import random
-
 import pygame
 import json
+from tkinter import *
+
+base_title = "Insomnia settings"
+
+# the window
+root = Tk()
+root.title(base_title)
+root.geometry("200x50")
 
 with open('config.json', 'r') as f:
     xsf = json.load(f)
+
+p = Label(
+    text="Coming soon....",
+    width=50,
+    height=50,
+    font="Atari"
+)
+p.pack()
 
 
 class UserControlledObject:
@@ -83,9 +98,10 @@ class NonUserControlledObject:
         self.rect.x = self.x
         self.rect.y = self.y
         self.health = 3
+        self.cracked = False
 
     def add_health(self):
-        if self.health < 2: self.health += 1
+        if self.health < 3: self.health += 1
 
     def remove_health(self): self.health -= 1
 
@@ -224,8 +240,8 @@ class Textbox:
         self.y1 = y1
         self.font = font
 
-    def add_text(self, text, screen,x,y):
-        screen.blit(self.font.render(text, True, (255, 255, 255)), (x,y))
+    def add_text(self, text, screen, x, y):
+        screen.blit(self.font.render(text, True, (255, 255, 255)), (x, y))
 
 
 # general functions to make the main file less bloated. named after the admiral general of the marines
@@ -250,3 +266,20 @@ class Sakazuki:
             obj.rect.x = 0
         elif obj.rect.y < 0:
             obj.rect.y = 0
+
+
+class TNT(StaticObject):
+    def __init__(self, x, y, image, screen):
+        super().__init__(x, y, image)
+        self.image = pygame.image.load(image)
+        self.image = pygame.transform.scale(self.image, (50, 50))
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+        self.draw(screen)
+        self.blasted = False
+
+
+    def draw(self, screen): screen.blit(self.image, self.rect)
+
+    def get_rect(self): return self.rect
