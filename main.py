@@ -2,19 +2,13 @@ import gearboy
 import pygame
 import random
 from gearboy import xsf
+from macros import *
 
 global continue_game, LEVEL, DRAW_ENEMY
 continue_game = False
 LEVEL = 1
 DRAW_ENEMY = True
-BACKGROUND_IMAGE = "images/background.jpg"
-STARTSCREEN = "images/startscreen.png"
-STARTBUTTON = "images/startbutton.png"
-HEART = "images/health.png"
-GREYHEART = "images/greyheart.png"
-BLACKHEART = "images/blackheart.png"
-GHOST = "images/spirit.png"
-SETTINGS = "images/settings.png"
+
 
 pygame.init()
 # make the screen
@@ -74,6 +68,9 @@ textbox = gearboy.Textbox(0, 600, 700, 600, font)
 screen.blit(background, (0, 0))
 while continue_game:
     for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            quit()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
                 main_character.move_up()
@@ -83,6 +80,8 @@ while continue_game:
                 main_character.move_backward()
             if event.key == pygame.K_RIGHT:
                 main_character.move_forward()
+            if event.key == pygame.K_q:
+                continue_game = False
     # if a sprite goes off the screen, move it back to the other side of the screen
     gearboy.Sakazuki.overflow(xsf['x'], xsf['y'], main_character)
     enemy.movement()
@@ -122,12 +121,12 @@ while continue_game:
         if gearboy.Sakazuki.check_collision(main_character,k) :
             main_character.rect.x = random.randint(0, 700)
             main_character.rect.y = random.randint(0, 700)
-            if k.blasted == False:
+            if not k.blasted:
                 main_character.remove_health()
                 main_character.remove_health()
                 k.image = pygame.transform.scale(pygame.image.load("images/bomb_blasted.png"), (64, 64))
                 k.blasted = True
-            elif k.blasted == True:
+            elif k.blasted:
                 main_character.remove_health()
             pygame.display.update()
 
@@ -141,9 +140,6 @@ while continue_game:
     gearboy.Sakazuki.overflow(xsf['x'], xsf['y'], health_point)
     gearboy.draw_hearts(screen, 0, 0, main_character, HEART)
 
-    if main_character.health <= 0:
-        continue_game = False
-
     if enemy.health <= 0:
         DRAW_ENEMY = False
         enemy.speed = 0
@@ -151,6 +147,14 @@ while continue_game:
         enemy.rect.y = 900
         textbox.add_text("", screen, 250, 600)
         textbox.add_text("Congratulations You killed the ghost!", screen, 0, 600)
+        pygame.display.update()
+    elif main_character.health <=0:
+        DRAW_ENEMY = False
+        enemy.speed = 0
+        enemy.rect.x = 900
+        enemy.rect.y = 900
+        textbox.add_text("", screen, 250, 600)
+        textbox.add_text("Oh no, you lost!", screen, 0, 600)
         pygame.display.update()
 
     if DRAW_ENEMY:
@@ -172,8 +176,3 @@ while continue_game:
     pygame.time.wait(1000 // 60)
     # clear the screen
     screen.blit(background, (0, 0))
-
-font = pygame.font.SysFont("Atari", 50)
-text = font.render("Game Over", True, (255, 0, 0))
-screen.blit(text, (250, 250))
-pygame.display.update()

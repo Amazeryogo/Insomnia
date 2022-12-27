@@ -1,3 +1,11 @@
 {"x": 700,
-  "y": 700
+  "y": 700,
+  "BACKGROUND_IMAGE" : "images/background.jpg",
+  "STARTSCREEN" : "images/startscreen.png",
+  "STARTBUTTON" : "images/startbutton.png",
+  "HEART" : "images/health.png",
+  "GREYHEART" : "images/greyheart.png",
+  "BLACKHEART" : "images/blackheart.png",
+  "GHOST" : "images/spirit.png",
+ "SETTINGS" : "images/settings.png"
 }
