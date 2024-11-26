@@ -105,7 +105,7 @@ class NonUserControlledObject:
 
     def remove_health(self): self.health -= 1
 
-    def movement(self):
+    def boiler_movement(self):
         self.rect.x += self.speed
         self.rect.y += self.speed
 
@@ -245,7 +245,7 @@ class Textbox:
 
 
 # general functions to make the main file less bloated. named after the admiral general of the marines
-class Sakazuki:
+class GeneralFunctions:
     def __init__(self):
         pass
 
